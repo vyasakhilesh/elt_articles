@@ -1,0 +1,18 @@
+services:
+  spark:
+    container_name: spark_new
+    build:
+      context: ./spark
+      dockerfile: Dockerfile
+    volumes:
+      - ./data:/opt/spark/data
+      - ./spark/scripts:/opt/spark/scripts
+    environment:
+      - SPARK_MASTER_NAME=spark-master
+      - SPARK_MASTER_PORT=7077
+      - SPARK_WORKER_CORES=2
+    ports:
+      - '9090:8080'
+      - '7077:7077'
+#    command: >
+#      bash -c "sleep 10 && spark-submit /opt/spark/scripts/process_json_to_delta.py"

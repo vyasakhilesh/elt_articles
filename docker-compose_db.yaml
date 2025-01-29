@@ -1,0 +1,14 @@
+services:
+  mongodb:
+    container_name: mongodb_new
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/mongodb/data:/data/db
+    restart: always
+

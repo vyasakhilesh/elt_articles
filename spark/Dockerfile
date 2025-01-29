@@ -1,8 +1,7 @@
 # spark/Dockerfile
-FROM bitnami/spark:3.1.2
+FROM bitnami/spark:latest
 
 USER root
-
 COPY requirements.txt /
 RUN pip install --no-cache-dir -r /requirements.txt
 
