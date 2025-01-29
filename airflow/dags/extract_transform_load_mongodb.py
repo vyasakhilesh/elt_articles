@@ -15,7 +15,7 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-dag = DAG('extract_transform_load_mongodb', default_args=default_args, schedule_interval='@daily')
+dag = DAG('extract_transform_load_mongodb', default_args=default_args, schedule_interval=None)
 
 spark_task = PythonOperator(
     task_id='spark_process_to_mongodb',

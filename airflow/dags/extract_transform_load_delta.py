@@ -5,9 +5,7 @@ import os
 import zipfile
 import subprocess
 
-def unzip_file():
-    zip_path = '/path/to/data/large_file.json.zip'
-    extract_path = '/path/to/data/'
+def unzip_file(zip_path, extract_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(extract_path)
 
@@ -23,11 +21,15 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-dag = DAG('extract_transform_load_delta', default_args=default_args, schedule_interval='@daily')
+dag = DAG('extract_transform_load_delta', default_args=default_args, schedule_interval=None)
 
 unzip_task = PythonOperator(
     task_id='unzip_file',
     python_callable=unzip_file,
+    op_kwargs={
+        'zip__path':"/opt/airflow/data/raw_data/sample_data/resync_datadump_sample220218.zip", 
+        'extract_path':"/opt/airflow/data/raw_data/extrcated_data/resync_datadump_sample220218/", 
+        },
     dag=dag,
 )
 

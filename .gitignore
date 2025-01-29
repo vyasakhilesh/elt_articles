@@ -1,3 +1,5 @@
+__pycache__/
 create_project.sh
 data
 .env
+logs/
