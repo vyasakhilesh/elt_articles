@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  airflow:
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+    ports:
+      - 8080:8080
+    command: >
+      bash -c "airflow db init && airflow webserver & airflow scheduler"
+
+  spark:
+    build:
+      context: ./spark
+      dockerfile: Dockerfile
+    volumes:
+      - ./data:/opt/spark/data
+      - ./spark/scripts:/opt/spark/scripts
+    environment:
+      - SPARK_MASTER_NAME=spark-master
+      - SPARK_MASTER_PORT=7077
+      - SPARK_WORKER_CORES=2
+    command: >
+      bash -c "sleep 10 && /opt/spark/bin/spark-submit /opt/spark/scripts/process_json_to_delta.py"
+
+  mongodb:
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/mongodb/data:/data/db
+    container_name: mongodb
+    restart: always
