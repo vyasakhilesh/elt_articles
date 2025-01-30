@@ -1,18 +1,55 @@
 services:
-  spark:
-    container_name: spark_new
+  spark-master:
+    container_name: spark-master-con
     build:
       context: ./spark
       dockerfile: Dockerfile
+    image: spark-image
+    entrypoint: ['./entrypoint.sh', 'master']
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
     volumes:
       - ./data:/opt/spark/data
-      - ./spark/scripts:/opt/spark/scripts
-    environment:
-      - SPARK_MASTER_NAME=spark-master
-      - SPARK_MASTER_PORT=7077
-      - SPARK_WORKER_CORES=2
+      - ./spark/scripts/:/opt/spark/scripts
+      - spark-logs:/opt/spark/spark-events
+    env_file:
+      - .env.spark
     ports:
       - '9090:8080'
       - '7077:7077'
-#    command: >
-#      bash -c "sleep 10 && spark-submit /opt/spark/scripts/process_json_to_delta.py"
+
+
+  spark-history-server:
+    container_name: spark-history
+    image: spark-image
+    entrypoint: ['./entrypoint.sh', 'history']
+    depends_on:
+      - spark-master
+    env_file:
+      - .env.spark
+    volumes:
+      - spark-logs:/opt/spark/spark-events
+    ports:
+      - '18080:18080'
+
+  spark-worker:
+#    container_name: da-spark-worker
+    image: spark-image
+    entrypoint: ['./entrypoint.sh', 'worker']
+    depends_on:
+      - spark-master
+    env_file:
+      - .env
+    volumes:
+      - ./data:/opt/spark/data
+      - ./spark/scripts/:/opt/spark/scripts
+      - spark-logs:/opt/spark/spark-events
+
+volumes:
+  spark-logs:
+networks:
+    elt_bridge_network:
+      driver: bridge

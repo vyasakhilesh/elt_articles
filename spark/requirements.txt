@@ -1,2 +1,7 @@
 delta-spark
 pymongo
+ipython
+pandas
+pyarrow
+numpy
+pyspark

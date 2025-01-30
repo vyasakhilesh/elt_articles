@@ -67,7 +67,7 @@ x-airflow-common:
     # AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
-    AIRFLOW_UID: 50000
+    AIRFLOW_UID: 1000
     # yamllint disable rule:line-length
     # Use simple http server on scheduler for health checks
     # See https://airflow.apache.org/docs/apache-airflow/stable/administration-and-deployment/logging-monitoring/check-health.html#scheduler-health-check-server
@@ -86,7 +86,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/venvs:/opt/airflow/venvs
     - ./data/:/opt/airflow/data
-  user: "${AIRFLOW_UID:-50000}:0"
+  user: "${AIRFLOW_UID:-1000}:0"
   depends_on:
     &airflow-common-depends-on
     redis:
@@ -94,7 +94,8 @@ x-airflow-common:
     postgres:
       condition: service_healthy
   networks:
-      - airbyte_airbyte_public
+      - elt_network
+      - elt_bridge_network
 
 services:
   postgres:
@@ -112,7 +113,8 @@ services:
       start_period: 5s
     restart: always
     networks:
-        - airbyte_airbyte_public
+        - elt_network
+        - elt_bridge_network
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -128,7 +130,8 @@ services:
       start_period: 30s
     restart: always
     networks:
-        - airbyte_airbyte_public
+        - elt_network
+        - elt_bridge_network
 
   airflow-webserver:
     <<: *airflow-common
@@ -299,10 +302,13 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-        - airbyte_airbyte_public
+        - elt_network
+        - elt_bridge_network
 volumes:
   postgres-db-volume:
 
 networks:
-    airbyte_airbyte_public:
+    elt_network:
         external: true
+    elt_bridge_network:
+      driver: bridge

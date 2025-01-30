@@ -3,3 +3,4 @@ create_project.sh
 data
 .env
 logs/
+.env.spark
