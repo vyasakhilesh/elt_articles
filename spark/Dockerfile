@@ -42,7 +42,7 @@ ENV SPARK_HOME="/opt/spark"
 ENV SPARK_MASTER="spark://spark-master:7077"
 ENV SPARK_MASTER_WEBUI_PORT=8080
 ENV SPARK_MASTER_HOST spark-master
-ENV SPARK_MASTER_PORT=7077
+ENV SPARK_MASTER_PORT 7077
 ENV SPARK_LOG_DIR=/opt/spark/logs
 ENV SPARK_MASTER_LOG=/opt/spark/logs/spark-master.out
 ENV SPARK_WORKER_LOG=/opt/spark/logs/spark-worker.out

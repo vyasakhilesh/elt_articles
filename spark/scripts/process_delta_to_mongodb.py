@@ -40,11 +40,11 @@ def delta_to_mongodb(uri, delta_table_path):
         }
 
         # Step 4: Insert the data into the collection
-        # result = collection.insert_one(data)
+        result = collection.insert_one(data)
         # collection.insert_many(pandas_df.to_dict("records"))
 
         # Print the ID of the inserted document
-        # print(f"Data inserted with id {result.inserted_id}")
+        print(f"Data inserted with id {result.inserted_id}")
 
         # Fetch all documents
         documents = collection.find()
