@@ -70,6 +70,6 @@ if __name__ == "__main__":
     # args = parser.parse_args()
 
     # main(args.zip_file_path, args.extract_to_folder, args.delta_table_path)
-    main("mongodb://root:example@localhost:27017/?directConnection=true",
+    main("mongodb://root:example@mongodb:27017/?directConnection=true",
         "/opt/spark/data/delta_table/core_data")
     # uri = "mongodb://mongoadmin:password@localhost:27017/?directConnection=true"
