@@ -36,6 +36,21 @@ def write_to_delta(df, delta_table_path):
     df.write.format("delta").mode("append").save(delta_table_path)
     print("Data written to Delta Lake successfully") 
 
+def upsert_to_delta(spark, new_data):
+    new_data.createOrReplaceTempView("new_data")
+
+    # Merge new data with Delta table
+    merge_query = """
+        MERGE INTO delta_table
+        USING new_data
+        ON delta_table.coreId = new_data.coreId OR delta_table.doi = new_data.doi
+        WHEN MATCHED THEN
+            UPDATE SET *
+        WHEN NOT MATCHED THEN
+            INSERT *
+    """
+    spark.sql(merge_query)
+
 def json_to_deltalake(delta_table_path, extract_path):
     # Initialize Spark session with Delta Lake support
     spark = SparkSession.builder \
@@ -47,20 +62,28 @@ def json_to_deltalake(delta_table_path, extract_path):
 
     # Get last ingestion time from Delta Lake
     # last_ingestion_time = get_last_ingestion_time(spark, delta_table_path)
+    # Check if Delta table exists
+    if os.path.exists(delta_table_path):
+        delta_table = DeltaTable.forPath(spark, delta_table_path)
+    else:
+        # If Delta table does not exist, create it from the initial JSON data
+        df = spark.read.json(extract_path)
+        df.write.format("delta").mode("overwrite").save(delta_table_path)
+        delta_table = DeltaTable.forPath(spark, delta_table_path)
 
     # Read JSON files and filter incremental data
     json_df = read_json_files_to_df(spark, extract_path)
+    json_df = json_df.repartition(10)
     # incremental_data = json_df.filter(json_df["last_updated"] > last_ingestion_time)
 
     # Write incremental data to Delta Lake
-    write_to_delta(json_df, delta_table_path)
+    # write_to_delta(json_df, delta_table_path)
+    batch_size = 10000
+    # Process data in batches
+    for i in range(0, json_df.count(), batch_size):
+        batch = json_df.limit(batch_size).offset(i)
+        upsert_to_delta(batch)
 
-    # Perform any necessary transformations
-    # df_transformed =   transform_data(df) # Example transformation
-
-    # Write data to Delta Lake
-    json_df.write.format("delta").mode("overwrite").save(delta_table_path)
-    
     spark.stop()
 
 def main(delta_table_path, extract_path):
