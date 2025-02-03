@@ -4,3 +4,4 @@ data
 .env
 logs/
 .env.spark
+.vscode/

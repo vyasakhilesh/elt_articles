@@ -12,11 +12,8 @@ services:
       - ./data/mongodb/data:/data/db
     restart: always
     networks:
-      - elt_network
       - elt_bridge_network
 networks:
-    elt_network:
-        external: true
     elt_bridge_network:
       driver: bridge
 

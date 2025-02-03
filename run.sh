@@ -1,5 +1,7 @@
 #!/bin/bash
-
+# sudo chmod 666 /var/run/docker.sock
+# sudo chmod -R 777 ./data
+# sudo chmod -R 777 ./airflow
 # curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.10.4/docker-compose.yaml'
 # docker compose up -d --
 # spark-submit --packages io.delta:delta-spark_2.12:3.3.0  /opt/spark/scripts/process_json_to_delta.py
