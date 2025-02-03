@@ -36,9 +36,14 @@ def write_to_delta(df, delta_table_path):
     df.write.format("delta").mode("append").save(delta_table_path)
     print("Data written to Delta Lake successfully") 
 
-def upsert_to_delta(spark, new_data):
+def upsert_to_delta(spark, delta_table, new_data):
     new_data.createOrReplaceTempView("new_data")
-    spark.sql("""SHOW TABLES""")
+    ## Show tables
+    spark.sql("SHOW TABLES").show()
+
+    # Show current database
+    spark.sql("SELECT current_database()").show()
+    
     # Merge new data with Delta table
     merge_query = """
         MERGE INTO delta_table
@@ -82,7 +87,7 @@ def json_to_deltalake(delta_table_path, extract_path):
     # Process data in batches
     for i in range(0, json_df.count(), batch_size):
         batch = json_df.limit(batch_size).offset(i)
-        upsert_to_delta(spark, batch)
+        upsert_to_delta(spark, delta_table, batch)
 
     spark.stop()
 
