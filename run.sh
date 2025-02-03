@@ -8,6 +8,7 @@
 docker compose -f docker-compose_db.yaml up -d --build --force-recreate
 docker compose -f docker-compose_spark.yaml up -d --build --force-recreate --scale spark-worker=3
 docker compose -f docker-compose_airflow.yaml up -d --build --force-recreate
+docker compose -f docker-compose_qdrant.yaml up -d --build --force-recreate
 # mongodb://root:example@localhost:27017/
 
 docker compose -f docker-compose_db.yaml -f docker-compose_spark.yaml -f docker-compose_airflow.yaml up -d --build --force-recreate
