@@ -31,10 +31,14 @@ unzip_task = PythonOperator(
     dag=dag,
 )
 
-spark_process_json_to_delta = BashOperator(
+spark_process_json_to_delta_task = BashOperator(
     task_id='spark_process_json_to_delta',
-    bash_command='sh -c "docker exec spark-master-con spark-submit --packages io.delta:delta-spark_2.12:3.3.0 --master spark://spark-master:7077 --deploy-mode client ./scripts/process_json_to_delta.py"',  # Replace with the batch command you want to run
+    bash_command='sh -c "docker exec spark-master-con spark-submit \
+                  --packages io.delta:delta-spark_2.12:3.3.0 \
+                  --master spark://spark-master:7077 \
+                  --deploy-mode client ./scripts/process_json_to_delta.py"',  
+                  # Replace with the batch command you want to run
     dag=dag,
 )
 
-unzip_task >> spark_process_json_to_delta
+unzip_task >> spark_process_json_to_delta_task

@@ -91,9 +91,9 @@ default_args = {
 dag = DAG('load_transform_mongodb_qdrant', default_args=default_args, schedule_interval=None)
 
 load_transform_mongodb_qdrant_task = PythonOperator(
-    task_id='spark_process_to_mongodb',
+    task_id='load_transform_mongodb_qdrant',
     python_callable=load_transform_mongodb_qdrant,
     dag=dag,
 )
 
-load_transform_mongodb_qdrant_task >> dag
+load_transform_mongodb_qdrant_task
