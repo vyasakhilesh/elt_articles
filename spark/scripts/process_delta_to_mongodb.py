@@ -24,7 +24,7 @@ def delta_to_mongodb(uri, delta_table_path):
         .config("spark.jars.packages", "io.delta:delta-spark_2.12:3.3.0") \
         .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
         .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
-        .config("spark.executor.memory", "2g") \
+        .config("spark.executor.memory", "1g") \
         .getOrCreate()
 
     # Read data from Delta Lake
@@ -44,7 +44,6 @@ def delta_to_mongodb(uri, delta_table_path):
     
     try:
         # Establish a connection to the MongoDB server with authentication
-        print(uri)
         client = MongoClient(uri)
         # client.admin.command('ping')  # Verify the connection
 
@@ -56,7 +55,7 @@ def delta_to_mongodb(uri, delta_table_path):
 
         # Insert the data into the collection
         # Convert to pandas DataFrame and insert in batches
-        batch_size = 10000  # Adjust batch size as needed
+        batch_size = 1000  # Adjust batch size as needed
         new_data_pd = df.toPandas()
         insert_data_in_batches(collection, new_data_pd, batch_size)
 
