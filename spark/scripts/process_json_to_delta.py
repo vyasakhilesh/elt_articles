@@ -66,6 +66,13 @@ def json_to_deltalake(delta_table_path, extract_path):
         .config("spark.jars.packages", "io.delta:delta-spark_2.12:3.3.0") \
         .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
         .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
+        .config("spark.sql.parquet.columnarReaderBatchSize", "1024") \
+        .config("spark.sql.orc.columnarReaderBatchSize", "1024") \
+        .config("spark.sql.parquet.enableVectorizedReader", "false") \
+        .config("spark.sql.orc.enableVectorizedReader", "false") \
+        .config("spark.executor.memory", "2g") \
+        .config("spark.driver.memory", "2g") \
+        .config("spark.sql.sources.bucketing.enabled", "false") \
         .getOrCreate()
 
     # Get last ingestion time from Delta Lake
@@ -81,12 +88,12 @@ def json_to_deltalake(delta_table_path, extract_path):
 
     # Read JSON files and filter incremental data
     json_df = read_json_files_to_df(spark, extract_path)
-    json_df = json_df.repartition(10)
+    json_df = json_df.repartition(100)
     # incremental_data = json_df.filter(json_df["last_updated"] > last_ingestion_time)
 
     # Write incremental data to Delta Lake
     # write_to_delta(json_df, delta_table_path)
-    batch_size = 10000
+    batch_size = 1000
     old_data = delta_table.toDF()
     old_data.createOrReplaceTempView("old_data")
     # Process data in batches
