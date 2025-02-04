@@ -95,3 +95,5 @@ load_transform_mongodb_qdrant_task = PythonOperator(
     python_callable=load_transform_mongodb_qdrant,
     dag=dag,
 )
+
+load_transform_mongodb_qdrant_task >> dag

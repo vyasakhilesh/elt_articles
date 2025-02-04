@@ -1,11 +1,8 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
+from airflow.operators.bash_operator import BashOperator
 from datetime import datetime, timedelta
-import subprocess
 
-def spark_process_to_mongodb():
-    script_path = '/path/to/spark/scripts/process_delta_to_mongodb.py'
-    subprocess.run(['spark-submit', script_path])
 
 default_args = {
     'owner': 'airflow',
@@ -17,8 +14,11 @@ default_args = {
 
 dag = DAG('extract_transform_load_mongodb', default_args=default_args, schedule_interval=None)
 
-spark_task = PythonOperator(
-    task_id='spark_process_to_mongodb',
-    python_callable=spark_process_to_mongodb,
+
+spark_process_delta_to_mongodb = BashOperator(
+    task_id='spark_process_delta_to_mongodb',
+    bash_command='sh -c "docker exec spark-master-con spark-submit --packages io.delta:delta-spark_2.12:3.3.0 --master spark://spark-master:7077 --deploy-mode client ./scripts/process_delta_to_mongodb.py"',  # Replace with the batch command you want to run
     dag=dag,
 )
+
+spark_process_delta_to_mongodb >> dag

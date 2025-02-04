@@ -5,3 +5,4 @@ data
 logs/
 .env.spark
 .vscode/
+nohup.out

@@ -1,34 +1,25 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
+from airflow.operators.bash_operator import BashOperator
 from datetime import datetime, timedelta
 import zipfile
-import subprocess
 
 def unzip_file(zip_path, extract_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(extract_path)
 
-def spark_process_to_delta(script_path):
-    # docker exec spark-container /opt/spark/bin/spark-submit /opt/spark/scripts/process_json_to_delta.py
-    # subprocess.run(['spark-submit', script_path])
-    result = subprocess.check_output(['docker',\
-                    'exec',\
-                    'spark_new',\
-                    '/opt/bitnami/spark/bin/spark-submit',\
-                    '--package',\
-                    'io.delta:delta-spark_2.12:3.3.0', \
-                     script_path], text=True)
-    print(result)
 
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2025, 1, 1),
-    'retries': 1,
+    'retries': 0,
     'retry_delay': timedelta(minutes=5),
 }
 
 dag = DAG('extract_transform_load_delta', default_args=default_args, schedule_interval=None)
+
+# download zipped files
 
 unzip_task = PythonOperator(
     task_id='unzip_file',
@@ -40,11 +31,10 @@ unzip_task = PythonOperator(
     dag=dag,
 )
 
-spark_task = PythonOperator(
-    task_id='spark_process_to_delta',
-    python_callable=spark_process_to_delta,
-    op_kwargs={'script_path':"/opt/spark/scripts/process_json_to_delta.py"},
+spark_process_json_to_delta = BashOperator(
+    task_id='spark_process_json_to_delta',
+    bash_command='sh -c "docker exec spark-master-con spark-submit --packages io.delta:delta-spark_2.12:3.3.0 --master spark://spark-master:7077 --deploy-mode client ./scripts/process_json_to_delta.py"',  # Replace with the batch command you want to run
     dag=dag,
 )
 
-unzip_task >> spark_task
+unzip_task >> spark_process_json_to_delta

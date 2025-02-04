@@ -43,43 +43,23 @@ def delta_to_mongodb(uri, delta_table_path):
     # df_transformed = df.select("field1", "field2", "field3")  # Example transformation
     
     try:
-    # Step 1: Establish a connection to the MongoDB server with authentication
+        # Establish a connection to the MongoDB server with authentication
         print(uri)
         client = MongoClient(uri)
         # client.admin.command('ping')  # Verify the connection
 
-        # Step 2: Select the database and collection
+        # Select the database and collection
         db = client['article_db']
         collection = db['article_collection']
 
-        # Step 3: Prepare the data to be inserted
+        # Prepare the data to be inserted
 
-        # Step 4: Insert the data into the collection
+        # Insert the data into the collection
         # Convert to pandas DataFrame and insert in batches
         batch_size = 10000  # Adjust batch size as needed
         new_data_pd = df.toPandas()
         insert_data_in_batches(collection, new_data_pd, batch_size)
-        
-        
-        """data = {
-            "name": "John Doe",
-            "email": "john.doe@example.com",
-            "age": 30
-        }
-        
-        db = client['article_db']
-        collection = db['article_collection']
-        
-        # result = collection.insert_one(data)
 
-        # Print the ID of the inserted document
-        # print(f"Data inserted with id {result.inserted_id}")
-        
-        # Fetch all documents
-        documents = collection.find()
-
-        for doc in documents:
-            print(doc)"""
         spark.close()
 
     except OperationFailure as e:

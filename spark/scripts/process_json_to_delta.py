@@ -1,5 +1,7 @@
 from pyspark.sql import SparkSession
 from delta.tables import *
+import pyspark.sql.functions as F
+from pyspark.sql.window import Window
 from delta import *
 import argparse
 import os
@@ -36,19 +38,20 @@ def write_to_delta(df, delta_table_path):
     df.write.format("delta").mode("append").save(delta_table_path)
     print("Data written to Delta Lake successfully") 
 
-def upsert_to_delta(spark, delta_table, new_data):
-    new_data.createOrReplaceTempView("new_data")
-    ## Show tables
-    spark.sql("SHOW TABLES").show()
+def deduplicate_source_data(df):
+    window_spec = Window.partitionBy("doi").orderBy(F.col("coreId").desc())
+    deduplicated_df = df.withColumn("row_number", F.row_number().over(window_spec)).filter(F.col("row_number") == 1).drop("row_number")
+    return deduplicated_df
 
-    # Show current database
-    spark.sql("SELECT current_database()").show()
+def upsert_to_delta(spark, new_data):
+    new_data = deduplicate_source_data(new_data)
+    new_data.createOrReplaceTempView("new_data")
     
     # Merge new data with Delta table
     merge_query = """
-        MERGE INTO delta_table
+        MERGE INTO old_data
         USING new_data
-        ON delta_table.coreId = new_data.coreId OR delta_table.doi = new_data.doi
+        ON old_data.coreId = new_data.coreId or old_data.doi = new_data.doi AND old_data.doi is not NULL
         WHEN MATCHED THEN
             UPDATE SET *
         WHEN NOT MATCHED THEN
@@ -84,10 +87,12 @@ def json_to_deltalake(delta_table_path, extract_path):
     # Write incremental data to Delta Lake
     # write_to_delta(json_df, delta_table_path)
     batch_size = 10000
+    old_data = delta_table.toDF()
+    old_data.createOrReplaceTempView("old_data")
     # Process data in batches
     for i in range(0, json_df.count(), batch_size):
         batch = json_df.limit(batch_size).offset(i)
-        upsert_to_delta(spark, delta_table, batch)
+        upsert_to_delta(spark, batch)
 
     spark.stop()
 
