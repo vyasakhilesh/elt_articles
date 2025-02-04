@@ -59,13 +59,13 @@ def delta_to_mongodb(uri, delta_table_path):
         new_data_pd = df.toPandas()
         insert_data_in_batches(collection, new_data_pd, batch_size)
 
-        spark.close()
+        spark.stop()
 
     except OperationFailure as e:
         print(f"Operation failed: {e}")
     finally:
         # Step 5: Close the connection
-        spark.close()
+        spark.stop()
         client.close()
 
 def main(uri, delta_table_path):
