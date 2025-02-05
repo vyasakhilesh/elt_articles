@@ -4,6 +4,7 @@ services:
     build:
       context: ./mongodb
       dockerfile: Dockerfile
+    image: mongodb-image
     env_file:
       - .env
     ports:

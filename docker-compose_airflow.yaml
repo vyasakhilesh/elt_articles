@@ -53,6 +53,7 @@ x-airflow-common:
   build:
     context: ./airflow
     dockerfile: Dockerfile
+  image: airflow-image
   env_file:
       - ./.env
   environment:

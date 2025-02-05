@@ -4,7 +4,7 @@ services:
     build:
       context: ./qdrant
       dockerfile: Dockerfile
-    image: qdrant:latest
+    image: qdrant-image
     ports:
       - 6333:6333
       - 6334:6334
