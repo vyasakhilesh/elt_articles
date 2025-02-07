@@ -1,0 +1,20 @@
+services:
+  airbyte:
+    container_name: airbyte_new
+    build:
+      context: ./airbyte
+      dockerfile: Dockerfile
+    image: airbyte-image
+#    command:  ["abctl", "local", "install"]
+    environment:
+      - AIRBYTE_CONFIG_FILE=./airbyte/config/local_env.json
+    env_file:
+      - .env.airbyte
+#    ports:
+#      - 8000:8000
+    volumes:
+      - ./data/:/data/
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./airbyte/config/:/root/.airbyte/abctl/
+    restart: always
+    network_mode: "host"
