@@ -8,3 +8,4 @@ logs/
 .vscode/
 nohup.out
 airbyte/config
+Error
