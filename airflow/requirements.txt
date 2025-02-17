@@ -1,2 +1,4 @@
 pymongo
 qdrant-client
+apache-airflow-providers-airbyte[http]
+ apache-airflow-providers-airbyte

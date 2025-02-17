@@ -1,0 +1,10 @@
+FROM docker:dind
+
+RUN apk update && apk add --no-cache shadow bash curl coreutils
+RUN apk add --no-cache sudo
+RUN useradd -ms /bin/bash ubuntu
+RUN echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN usermod -aG docker ubuntu
+USER ubuntu
+CMD ["tail", "-f", "/dev/null"]
+

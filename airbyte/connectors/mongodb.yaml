@@ -1,0 +1,52 @@
+version: "0.1.0"
+
+definitions:
+  stream:
+    type: object
+    required:
+      - name
+      - json_schema
+    properties:
+      name:
+        type: string
+      json_schema:
+        type: object
+
+  source:
+    type: object
+    required:
+      - streams
+    properties:
+      streams:
+        type: array
+        items:
+          $ref: "#/definitions/stream"
+
+sourceSpec:
+  name: "MongoDB"
+  type: "source"
+  dockerRepository: "airbyte/source-mongodb"
+  dockerImageTag: "latest"
+  documentationUrl: "https://docs.airbyte.io/integrations/sources/mongodb"
+  spec:
+    $ref: "#/definitions/source"
+
+source:
+  name: "MongoDB Source"
+  streams:
+    - name: "article_collection"
+    - json_schema:
+        type: object
+        properties:
+          field1:
+            type: string
+          field2:
+            type: integer
+  spec:
+    host: "host.docker.internal"
+    port: 27017
+    database: "article_db"
+    auth:
+      method: "password"
+      username: "root"
+      password: "example"

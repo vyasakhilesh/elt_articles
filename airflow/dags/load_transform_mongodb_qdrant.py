@@ -55,6 +55,19 @@ def upsert_data_in_batches(qdrant_client, qdrant_collection_name, data, batch_si
         print(f"Upserted {len(points)} points to Qdrant.") # 21124
     else:
         print(f"Upserted {len(points)} points to Qdrant.")
+        
+def collection_exists(client, collection_name):
+    collections = client.get_collections()
+    return any(collection.name == collection_name for collection in collections.collections)
+
+
+def create_collection_if_not_exists(client, collection_name):
+    if not collection_exists(client, collection_name):
+        client.create_collection(collection_name=collection_name,
+                                 vectors_config=models.VectorParams(size=5, distance=models.Distance.COSINE),)
+        print(f'Collection "{collection_name}" created successfully.')
+    else:
+        print(f'Collection "{collection_name}" already exists.')
 
 # Process data in batches
 def load_transform_mongodb_qdrant():
@@ -66,6 +79,8 @@ def load_transform_mongodb_qdrant():
     # Initialize Qdrant client
     qdrant_client = QdrantClient("http://qdrant:6333")
     qdrant_collection_name = "article_collection"
+    # Create the collection if it doesn't exist
+    create_collection_if_not_exists(qdrant_client, qdrant_collection_name)
     batch_size = 10000  # Adjust batch size as needed
     cursor = mongo_collection.find({})
     batch = []
@@ -97,3 +112,7 @@ load_transform_mongodb_qdrant_task = PythonOperator(
 )
 
 load_transform_mongodb_qdrant_task
+
+
+
+

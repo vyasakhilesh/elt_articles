@@ -22,3 +22,24 @@ docker exec spark-master-con spark-submit --packages io.delta:delta-spark_2.12:3
 
 # Airbyte
 ip addr show eth0 | grep inet | awk '{ print $2 }' | cut -d/ -f1
+host.docker.internal
+
+curl  -u 'airbyte:password' -X POST "http://localhost:8000/api/v1/connections/sync" \
+ -H "Accept: application/json"\
+ -H "Content-Type: application/json" \
+ -d '{"connectionId":"[99e4ec1b-b607-43e7-a89b-b73aa6e34857]"}' 
+
+ curl  -u 'akh.vyas@gmail.com:XOwgHUkY0jPjVduuQEW6i1slXz2ogCFI' -X POST "http://localhost:8000/api/v1/connections/sync" \
+ -H "Accept: application/json"\
+ -H "Content-Type: application/json" \
+ -d '{"connectionId":"99e4ec1b-b607-43e7-a89b-b73aa6e34857"}'
+
+Email: akh.vyas@gmail.com
+Password: XOwgHUkY0jPjVduuQEW6i1slXz2ogCFI
+Client-Id: 06421598-74d3-48bd-a34a-e54fcbc6d85b
+Client-Secret: 5EvUgmLnANfQlkraCbsp5iXvou2G0NKV
+
+curl -X POST http://localhost:8000/api/v1/applications/token \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer your_access_token" \
+     -d '{"client_id": "06421598-74d3-48bd-a34a-e54fcbc6d85b", "client_secret": "5EvUgmLnANfQlkraCbsp5iXvou2G0NKV"}'
