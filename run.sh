@@ -12,6 +12,7 @@ docker compose -f docker-compose_spark.yaml up -d --build --force-recreate --sca
 docker compose -f docker-compose_airflow.yaml up -d --build --force-recreate
 docker compose -f docker-compose_airbyte.yaml up -d --build --force-recreate
 docker compose -f docker-compose_qdrant.yaml up -d --build --force-recreate
+docker compose -f docker-compose_sftp.yaml up -d --build ----force-recreate
 # mongodb://root:example@localhost:27017/
 
 docker compose -f docker-compose_db.yaml -f docker-compose_spark.yaml -f docker-compose_airflow.yaml up -d --build --force-recreate
@@ -43,3 +44,7 @@ curl -X POST http://localhost:8000/api/v1/applications/token \
      -H "Content-Type: application/json" \
      -H "Authorization: Bearer your_access_token" \
      -d '{"client_id": "06421598-74d3-48bd-a34a-e54fcbc6d85b", "client_secret": "5EvUgmLnANfQlkraCbsp5iXvou2G0NKV"}'
+
+# sftp
+ssh-keygen -f "/home/avyas/.ssh/known_hosts" -R "[127.0.0.1]:2222"
+sftp -oPort=2222 foo@127.0.0.1
