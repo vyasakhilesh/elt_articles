@@ -48,3 +48,6 @@ curl -X POST http://localhost:8000/api/v1/applications/token \
 # sftp
 ssh-keygen -f "/home/avyas/.ssh/known_hosts" -R "[127.0.0.1]:2222"
 sftp -oPort=2222 foo@127.0.0.1
+https://charts.mongodb.com/charts-project-0-xzlesxv/data-sources
+https://cloud.qdrant.io/accounts/bad6e7b1-95fa-41cd-ac89-3bace33f3bae/clusters/e918655e-5705-4103-9dab-4e053444e94c/overview
+

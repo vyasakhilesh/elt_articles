@@ -1,0 +1,21 @@
+services:
+  sftp:
+    image: atmoz/sftp
+    ports:
+      - "2222:22"
+    volumes:
+      - ./data/raw_data/extracted_data:/home/user1/extracted_data/
+      - ~/.ssh/sftp.pub:/home/user1/.ssh/keys/sftp.pub:ro
+      - ~/.ssh/sftp.pub:/root/.ssh/keys/sftp.pub:ro
+    environment:
+      - USER=user1
+      - PASSWORD=password
+      - ALLOWED_USERS=user1
+      - ALLOWED_WRITE_USERS=user1
+    command: user1:password:1001
+    networks:
+      - elt_bridge_network
+
+networks:
+    elt_bridge_network:
+      driver: bridge
