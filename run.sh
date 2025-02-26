@@ -51,3 +51,13 @@ sftp -oPort=2222 foo@127.0.0.1
 https://charts.mongodb.com/charts-project-0-xzlesxv/data-sources
 https://cloud.qdrant.io/accounts/bad6e7b1-95fa-41cd-ac89-3bace33f3bae/clusters/e918655e-5705-4103-9dab-4e053444e94c/overview
 
+# MongoDB cluster
+docker exec -it mongo1 mongosh --eval "rs.initiate({
+ _id: \"myReplicaSet\",
+ members: [
+   {_id: 0, host: \"mongo1\"},
+   {_id: 1, host: \"mongo2\"},
+   {_id: 2, host: \"mongo3\"}
+ ]
+})"
+
