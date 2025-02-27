@@ -8,10 +8,25 @@ services:
     ports:
       - 6333:6333
       - 6334:6334
+    configs:
+      - source: qdrant_config
+        target: /qdrant/config/production.yaml
+    environment:
+      - QDRANT__LOG_LEVEL=INFO
+      - QDRANT__SERVICE__API_KEY=Test1234567890
+      - QDRANT__SERVICE__ENABLE_TLS=1
+      - QDRANT__TLS__CERT=/qdrant/config/tls/cert.pem
+      - QDRANT__TLS__KEY=/qdrant/config/tls/key.pem
     volumes:
-      - qdrant_data:/qdrant/data
+      - qdrant_data:/qdrant/storage
+      - ./qdrant/certs/:/qdrant/config/tls/
     networks:
       - elt_bridge_network
+
+configs:
+  qdrant_config:
+    content: |
+      log_level: INFO 
 
 volumes:
   qdrant_data:

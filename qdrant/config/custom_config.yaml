@@ -1,0 +1,19 @@
+service:
+  # Set an api-key.
+  # If set, all requests must include a header with the api-key.
+  # example header: `api-key: <API-KEY>`
+  #
+  # If you enable this you should also enable TLS.
+  # (Either above or via an external service like nginx.)
+  # Sending an api-key over an unencrypted channel is insecure.
+  api_key: Test1234567890
+  enable_tls: true
+
+  # TLS configuration.
+  # Required if either service.enable_tls or cluster.p2p.enable_tls is true.
+  tls:
+    # Server certificate chain file
+    cert: ./tls/cert.pem
+
+    # Server private key file
+    key: ./tls/key.pem

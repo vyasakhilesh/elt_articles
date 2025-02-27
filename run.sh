@@ -61,3 +61,39 @@ docker exec -it mongo1 mongosh --eval "rs.initiate({
  ]
 })"
 
+# Qdrant Certification
+mkcert -install
+mkcert localhost 127.0.0.1 ::1
+
+# Create a collection with default dense vector
+curl  -X PUT \
+  'http://localhost:6333/collections/collection_name' \
+  --header 'api-key: <api-key-value>' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "vectors": {
+    "size": 384,
+    "distance": "Cosine"
+  }
+}'
+
+# Create a collection with named dense and sparse vectors
+curl  -X PUT \
+  'https://localhost:6333/collections/article_collection' \
+  --header 'api-key: Test1234567890' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "vectors": {
+    "dense-vector-name": {
+      "size": 1536,
+      "distance": "Cosine"
+    },
+    "sparse_vectors": {
+      "sparse-vector-name": {
+        "index": {
+          "on_disk": true
+        }
+      }
+    }
+  }
+}'
