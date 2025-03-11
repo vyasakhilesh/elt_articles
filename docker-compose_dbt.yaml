@@ -1,0 +1,21 @@
+services:
+  dbt:
+    build:
+      context: ./dbt
+      dockerfile: Dockerfile
+    image: dbt-image
+    container_name: dbt-container
+    volumes:
+      - ./dbt:/usr/app
+    working_dir: /usr/app
+    environment:
+      DBT_PROFILES_DIR: /usr/app/.dbt
+      POSTGRES_TEST_HOST: "postgres"
+    entrypoint: ["dbt"]
+    networks:
+      - elt_bridge_network
+
+networks:
+    elt_bridge_network:
+      driver: bridge
+

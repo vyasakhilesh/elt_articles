@@ -12,7 +12,10 @@ docker compose -f docker-compose_spark.yaml up -d --build --force-recreate --sca
 docker compose -f docker-compose_airflow.yaml up -d --build --force-recreate
 docker compose -f docker-compose_airbyte.yaml up -d --build --force-recreate
 docker compose -f docker-compose_qdrant.yaml up -d --build --force-recreate
-docker compose -f docker-compose_sftp.yaml up -d --build ----force-recreate
+docker compose -f docker-compose_sftp.yaml up -d --build --force-recreate
+docker compose -f docker-compose_postgresql.yaml up -d --build --force-recreate
+docker compose -f docker-compose_dbt.yaml up -d --build --force-recreate
+
 # mongodb://root:example@localhost:27017/
 
 docker compose -f docker-compose_db.yaml -f docker-compose_spark.yaml -f docker-compose_airflow.yaml up -d --build --force-recreate
@@ -97,3 +100,12 @@ curl  -X PUT \
     }
   }
 }'
+
+## DBT setup
+docker pull ghcr.io/dbt-labs/<db_adapter_name>:<version_tag>
+docker run \
+--network=host \
+--mount type=bind,source=path/to/project,target=/usr/app \
+--mount type=bind,source=path/to/profiles.yml,target=/root/.dbt/profiles.yml \
+<dbt_image_name> \
+ls

@@ -38,7 +38,7 @@ RUN sudo usermod -aG sudo ubuntu
 # USER ubuntu
 RUN curl -LsfS https://get.airbyte.com | bash -
 # RUN sudo service docker start && sleep 10s
-# RUN abctl local install
+# RUN abctl local install --no-browser
 # RUN abctl local install --low-resource-mode --no-browser
 
 # Default command (optional, replace with your desired command)
