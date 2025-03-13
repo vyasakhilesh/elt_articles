@@ -33,10 +33,48 @@ curl  -u 'airbyte:password' -X POST "http://localhost:8000/api/v1/connections/sy
  -H "Content-Type: application/json" \
  -d '{"connectionId":"[99e4ec1b-b607-43e7-a89b-b73aa6e34857]"}' 
 
- curl  -u 'akh.vyas@gmail.com:XOwgHUkY0jPjVduuQEW6i1slXz2ogCFI' -X POST "http://localhost:8000/api/v1/connections/sync" \
+curl  -u 'akh.vyas@gmail.com:XOwgHUkY0jPjVduuQEW6i1slXz2ogCFI' -X POST "http://localhost:8000/api/v1/connections/sync" \
  -H "Accept: application/json"\
  -H "Content-Type: application/json" \
  -d '{"connectionId":"99e4ec1b-b607-43e7-a89b-b73aa6e34857"}'
+
+curl -u 'akh.vyas@gmail.com:XOwgHUkY0jPjVduuQEW6i1slXz2ogCFI' -X GET \
+     --url http://localhost:8000/api/public/v1/workspaces \
+     --header 'accept: application/json'
+
+curl -u 'akh.vyas@gmail.com:XOwgHUkY0jPjVduuQEW6i1slXz2ogCFI' -X GET \
+     --url http://172.18.0.2/api/public/v1/workspaces \
+     --header 'accept: application/json'
+
+curl -u 'akh.vyas@gmail.com:XOwgHUkY0jPjVduuQEW6i1slXz2ogCFI' -X GET \
+     --url http://airbyte-abctl-control-plane:80/api/public/v1/workspaces \
+     --header 'accept: application/json'
+
+{
+  "2b04e86a-aec6-4aff-b053-e7a238dd976e": {
+    "conn_type": "airbyte",
+    "description": "",
+    "login": "akh.vyas@gmail.com",
+    "password": "vyas1234",
+    "host": "airbyte-abctl-control-plane",
+    "port": 80,
+    "schema": "",
+    "extra": "{}"
+  }
+
+import json
+from airflow.models.connection import Connection
+
+c = Connection(
+     conn_id='2b04e86a-aec6-4aff-b053-e7a238dd976e',
+     conn_type='airbyte',
+     description='connection description',
+     host='airbyte-abctl-control-plane',
+     login='akh.vyas@gmail.com',
+     password='XOwgHUkY0jPjVduuQEW6i1slXz2ogCFI',
+     extra=json.dumps(dict(this_param='some val', that_param='other val*')), )
+print(f"AIRFLOW_CONN_{c.conn_id.upper()}='{c.get_uri()}'")
+AIRFLOW_CONN_SOME_CONN='mysql://myname:mypassword@myhost.com?this_param=some+val&that_param=other+val%2A'
 
 Email: akh.vyas@gmail.com
 Password: XOwgHUkY0jPjVduuQEW6i1slXz2ogCFI
